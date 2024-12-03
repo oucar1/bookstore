@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book List</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Book List</h1>
+
+        <!-- Search and Filter Section -->
+        <div class="filter-section">
+            <form method="get" action="" class="search-form">
+                <input type="text" name="q" placeholder="Search by title or author..." value="{{ query }}">
+                <button type="submit">Search</button>
+            </form>
+
+            <form method="get" action="" class="filter-form">
+                <!-- Keep the search query -->
+                <input type="hidden" name="q" value="{{ query }}">
+
+                <label for="category">Filter by Category:</label>
+                <select name="category" id="category">
+                    <option value="">All</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.0 }}" {% if selected_category == cat.0 %}selected{% endif %}>{{ cat.1 }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="sort">Sort by Price:</label>
+                <select name="sort" id="sort">
+                    <option value="">None</option>
+                    <option value="asc" {% if sort_by_price == 'asc' %}selected{% endif %}>Low to High</option>
+                    <option value="desc" {% if sort_by_price == 'desc' %}selected{% endif %}>High to Low</option>
+                </select>
+
+                <button type="submit">Apply</button>
+            </form>
+        </div>
+
+        <!-- Book List -->
+        <div class="book-grid">
+            {% for book in books %}
+                <div class="book-card">
+                    {% if book.image %}
+                        <img src="{{ book.image.url }}" alt="{{ book.title }}">
+                    {% endif %}
+                    <h2><a href="{% url 'book_detail' book.id %}">{{ book.title }}</a></h2>
+                    <p><strong>Author:</strong> {{ book.author }}</p>
+                    <p>{{ book.description_short }}</p>
+                    <p><strong>Price:</strong> ${{ book.price }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
